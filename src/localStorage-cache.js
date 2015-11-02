@@ -22,17 +22,7 @@
 			if (typeof vallue == "object") {
 				value = JSON.stringify(value);
 			}
-			if (expired == 0) {
-				var _this = this;
-				window.onbeforeunload = function() {
-					_this.remove(key);
-				}
-			} else if (typeof expired === 'number') {
-				var now = +new Date();
-				expired += expired * 1000;
-			} else if (typeof expired === "object") {
-				expired = expired.getTime() || -1;
-			}
+			expired = this._getExp(expired);
 			var obj = {
 				data: value,
 				expired: expired,
@@ -45,28 +35,58 @@
 			var dtd = $.Deferred();
 			if (obj.expired > 0) {
 				var now = +new Date();
-				if(now> obj.expired){
+				if (now > obj.expired) {
 					//过期
-					if(promise){
-						promise().fail(function(){
+					if (promise) {
+						promise().fail(function() {
 							dtd.resolve(obj.data);
 						});
-					}else{
+					} else {
 						dtd.resolve(null);
 					}
-				}else{
+				} else {
 					dtd.resolve(obj.data);
 				}
-			}else{
+			} else {
 				dtd.resolve(obj.data);
 			}
-			return dtd;
+			return dtd.promise();
 		},
 		remove: function(key) {
 			localStorage.removeItem(key);
 		},
 		clear: function() {
 			localStorage.clear();
+		},
+		update: function(key, value, expired) {
+			if (typeof vallue == "object") {
+				value = JSON.stringify(value);
+			}
+			expired = this._getExp(expired);
+			var json = JSON.parse(localStorage.getItem(key));
+			if (json != null) {
+				(typeof expired == 'undefined' ||expired =='') ? expired = json.expired : null;
+			}
+			var obj = {
+				data: value,
+				expired: expired,
+				time: +new Date()
+			};
+			localStorage.setItem(key, JSON.stringify(obj));
+		},
+		_getExp: function(expired) {
+			if (expired == 0) {
+				var _this = this;
+				window.onbeforeunload = function() {
+					_this.remove(key);
+				}
+			} else if (typeof expired == 'number' || !isNaN(Number(expired))) {
+				var now = +new Date();
+				expired =now + expired * 1000;
+			} else if (typeof expired == "object") {
+				expired = expired.getTime() || -1;
+			}
+			return expired;
 		}
 	};
 	return LocalStorageCache;

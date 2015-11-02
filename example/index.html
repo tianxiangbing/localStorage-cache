@@ -7,15 +7,17 @@
 	</head>
 	<body>
 	<div>过期时间：<input type="text" value="" id="txt_expri"/> 内容：<input type="text" value="test" id="txt_desc"/> </div>
-	<div><input type="button" value="add/update" id="btn_add"/></div>
+	<div><input type="button" value="add/overwrite" id="btn_add"/></div>
+	<div><input type="button" value="update" id="btn_update"/></div>
 	<div><input type="button" value="get" id="btn_get"/></div>
 	<div><input type="button" value="clear" id="btn_clear"/></div>
-	<div><input type="button" value="get&update" id="btn_update"/></div>
+	<div><input type="button" value="get&update" id="btn_getupdate"/></div>
 	<script type="text/javascript" src="../src/jquery-1.11.2.js"></script>
 	<script type="text/javascript" src="../src/localStorage-cache.js"></script>
 	<script>
 	$("#btn_add").click(function(){
 		LocalStorageCache.add('key',$('#txt_desc').val(),$('#txt_expri').val());
+		$("#btn_get").click();
 	});
 	$("#btn_get").click(function(){
 		LocalStorageCache.get('key').done(function(v){
@@ -26,19 +28,18 @@
 		LocalStorageCache.clear()
 	});
 	function ajax(){
-		var dtd =  $.Deferred();
-		$.get('index1.html').done(function(){
+		return  $.get('index1.html').done(function(){
 				LocalStorageCache.add('key','11112')
-				dtd.resolve();
-			}).fail(function(){
-				dtd.reject();
-		})
-		return dtd.promise();
+			});
 	}
-	$("#btn_update").click(function(){
+	$("#btn_getupdate").click(function(){
 		LocalStorageCache.get('key',ajax).done(function(result){
 			alert(result)
 		});
+	});
+	$("#btn_update").click(function(){
+		LocalStorageCache.update('key',$('#txt_desc').val(),$('#txt_expri').val());
+		$("#btn_get").click();
 	});
 	</script>
 </body>
