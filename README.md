@@ -1,6 +1,8 @@
 # localStorage-cache
 localStorage本地存储缓存管理。 
 
+**[DEMO请案例点击这里查看.](http://www.lovewebgames.com/jsmodule/localStorage-cache.html "localStorage-cache demo")**
+
 ##使用方法
 
 	LocalStorageCache.add('key','value');
