@@ -7,7 +7,6 @@
  * Contact: 55342775@qq.com
  */
 var gulp = require('gulp'),
-    rjs = require('gulp-requirejs'),
     uglify = require('gulp-uglify'),
     cssmin = require('gulp-minify-css'),
     watchF = require('gulp-watch'),
@@ -26,45 +25,19 @@ gulp.task('css', function() {
             compatibility: 'ie8'
         })) //兼容ie
         .pipe(gulp.dest('dist'))
-        .pipe(gulp.dest('dest'));
 });
 gulp.task('img', function() {
     return gulp.src(paths.img)
         .pipe(gulp.dest('dist'))
-        .pipe(gulp.dest('dest'));
-});
-gulp.task('requirejs', function() {
-    return rjs({
-            "name": "localStorage-cache",
-            "baseUrl": "src",
-            "out": "localStorage-cache.js",
-            shim: {
-                '$': {
-                    exports: '_'
-                }
-            },
-            "paths": {
-                $:"jquery-1.11.2"
-            },
-            exclude:["$"],
-            //这里不打包zepto
-            // map: {
-            //     "*": {
-            //         "$": "jquery-private"
-            //     },
-            //     "jquery-private": {}
-            // }
-            // ... more require.js options
-        }).pipe(uglify())
-        .pipe(gulp.src(['src/jquery-1.11.2.js','src/localStorage-cache.js']).pipe(uglify()))
-        .pipe(gulp.dest('dest')); // pipe it to the output DIR
 });
 gulp.task('watch',function(){
     watchF(['src/*.*','html/*.*'],function(){
         gulp.start('default')
     });
 });
-gulp.task('markdown',function(){
-    return gulp.src('README.md').pipe(markdown).pipe(gulp.dest('dist'));
+gulp.task('mk',function(){
+        return gulp.src('README.md')
+        .pipe(markdown())
+        .pipe(gulp.dest('dist'));
 });
 gulp.task('default', ['js', 'css','img']);

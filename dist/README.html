@@ -1,0 +1,35 @@
+<h1 id="localstorage-cache">localStorage-cache</h1>
+<p>localStorage本地存储缓存管理。 </p>
+<p><strong><a href="http://www.lovewebgames.com/jsmodule/localStorage-cache.html" title="localStorage-cache demo">DEMO请案例点击这里查看.</a></strong></p>
+<p>##使用方法</p>
+<pre><code>LocalStorageCache.add(&#39;key&#39;,&#39;value&#39;);
+</code></pre><p>一般情况下是这样的添加的</p>
+<p>##add :function(key,value,exp)</p>
+<pre><code>add有三个参数,key是键，value为值，exp是过期时间，可以是0（关闭时过期）,int 秒为单位，date类型为具体到期日期
+</code></pre><p>##get:function(key,promise)</p>
+<pre><code>返回promise, 如果cache已过期，当第二个参数promise存在时，promise的fail时会在返回过期时的值
+
+function ajax(){
+    var dtd = $.Deferred();
+    $.get(&#39;index.html&#39;).done(function(){
+        dtd.resolve(&quot;hello world.&quot;);
+        LocalStorageCache.setExpired($(&#39;#txt_expri&#39;).val())//重新设置过期时间
+    }).fail(function(){
+        dtd.reject();
+    });
+    return  dtd ;
+}
+$(&quot;#btn_getupdate&quot;).click(function(){
+    LocalStorageCache.get(&#39;key&#39;,ajax).done(function(result){
+        alert(result)
+    }).fail(function(result){
+        alert(result+&#39;fail&#39;)
+    });
+});
+</code></pre><p>##remove:function(key)</p>
+<pre><code>移除cache
+</code></pre><p>##clear:function()</p>
+<pre><code>清空所有cache
+</code></pre><p>##update:function(key,value,exp)</p>
+<pre><code>更新cache,如果不加exp参数，就只更新内容。
+</code></pre>
