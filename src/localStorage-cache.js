@@ -33,16 +33,32 @@
 		get: function(key, promise) {
 			var obj = JSON.parse(localStorage.getItem(key));
 			var dtd = $.Deferred();
+			var _this = this;
+			if (obj == null) {
+				if (promise) {
+					promise().fail(function() {
+						dtd.reject(null);
+					}).done(function(data) {
+						_this.add(key, data);
+						dtd.resolve(data);
+					});
+				} else {
+					dtd.reject(null);
+				}
+			} else
 			if (obj.expired > 0) {
 				var now = +new Date();
 				if (now > obj.expired) {
 					//过期
 					if (promise) {
 						promise().fail(function() {
-							dtd.resolve(obj.data);
+							dtd.reject(obj.data);
+						}).done(function(data) {
+							_this.update(key, data);
+							dtd.resolve(data);
 						});
 					} else {
-						dtd.resolve(null);
+						dtd.reject(null);
 					}
 				} else {
 					dtd.resolve(obj.data);
@@ -65,13 +81,19 @@
 			expired = this._getExp(expired);
 			var json = JSON.parse(localStorage.getItem(key));
 			if (json != null) {
-				(typeof expired == 'undefined' ||expired =='') ? expired = json.expired : null;
+				(typeof expired == 'undefined' || expired == '') ? expired = json.expired: null;
 			}
 			var obj = {
 				data: value,
 				expired: expired,
 				time: +new Date()
 			};
+			localStorage.setItem(key, JSON.stringify(obj));
+		},
+		setExpired: function(key, expired) {
+			expired = this._getExp(expired);
+			var obj = JSON.parse(localStorage.getItem(key));
+			obj.expired = expired;
 			localStorage.setItem(key, JSON.stringify(obj));
 		},
 		_getExp: function(expired) {
@@ -82,7 +104,7 @@
 				}
 			} else if (typeof expired == 'number' || !isNaN(Number(expired))) {
 				var now = +new Date();
-				expired =now + expired * 1000;
+				expired = now + expired * 1000;
 			} else if (typeof expired == "object") {
 				expired = expired.getTime() || -1;
 			}

@@ -22,19 +22,28 @@
 	$("#btn_get").click(function(){
 		LocalStorageCache.get('key').done(function(v){
 				alert(v)
+		}).fail(function(){
+				alert('缓存已不存在或已过期了')
 		});
 	});
 	$("#btn_clear").click(function(){
 		LocalStorageCache.clear()
 	});
 	function ajax(){
-		return  $.get('index1.html').done(function(){
-				LocalStorageCache.add('key','11112')
-			});
+		var dtd = $.Deferred();
+		$.get('index.html').done(function(){
+			dtd.resolve("hello world.");
+			LocalStorageCache.setExpired($('#txt_expri').val())//重新设置过期时间
+		}).fail(function(){
+			dtd.reject();
+		});
+		return  dtd ;
 	}
 	$("#btn_getupdate").click(function(){
 		LocalStorageCache.get('key',ajax).done(function(result){
 			alert(result)
+		}).fail(function(result){
+			alert(result+'fail')
 		});
 	});
 	$("#btn_update").click(function(){

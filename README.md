@@ -17,8 +17,22 @@ localStorage本地存储缓存管理。
 	
 	返回promise, 如果cache已过期，当第二个参数promise存在时，promise的fail时会在返回过期时的值
 
-	LocalStorageCache.get('key',ajax).done(function(result){
-		alert(result)
+	function ajax(){
+		var dtd = $.Deferred();
+		$.get('index.html').done(function(){
+			dtd.resolve("hello world.");
+			LocalStorageCache.setExpired($('#txt_expri').val())//重新设置过期时间
+		}).fail(function(){
+			dtd.reject();
+		});
+		return  dtd ;
+	}
+	$("#btn_getupdate").click(function(){
+		LocalStorageCache.get('key',ajax).done(function(result){
+			alert(result)
+		}).fail(function(result){
+			alert(result+'fail')
+		});
 	});
 
 ##remove:function(key)

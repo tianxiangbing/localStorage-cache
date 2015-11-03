@@ -10,7 +10,8 @@ var gulp = require('gulp'),
     rjs = require('gulp-requirejs'),
     uglify = require('gulp-uglify'),
     cssmin = require('gulp-minify-css'),
-    watchF = require('gulp-watch');
+    watchF = require('gulp-watch'),
+    markdown = require('gulp-markdown');
 var paths = {
     script: 'src/*.js',
     css: 'src/*.css',
@@ -62,5 +63,8 @@ gulp.task('watch',function(){
     watchF(['src/*.*','html/*.*'],function(){
         gulp.start('default')
     });
+});
+gulp.task('markdown',function(){
+    return gulp.src('README.md').pipe(markdown).pipe(gulp.dest('dist'));
 });
 gulp.task('default', ['js', 'css','img']);
